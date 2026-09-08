@@ -173,7 +173,7 @@ article h2 {
     background: #ffffff;
     padding: 6px;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-    flex-shrink: 0; /* Не позволяет логотипу сжиматься при узком экране */
+    flex-shrink: 0;
 }
 
 .edu-content {
