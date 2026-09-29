@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Быки и коровы</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app">
+        <header class="header">
+        <h1 class="title">Быки и коровы</h1>
+        </header>
+
+        <div class="counter">Попыток: <span id="attempts">0</span></div>
+
+        <div id="grid" class="grid" aria-label="Сетка попыток"></div>
+
+        <p id="error" class="error" role="alert"></p>
+
+        <div id="winMessage" class="win" hidden></div>
+
+        <form id="guessForm" class="form" autocomplete="off">
+            <input id="guessInput" class="input" type="text" inputmode="numeric"
+             maxlength="8" placeholder="4 разные цифры" aria-label="Ваша попытка">
+            <button id="checkBtn" class="btn btn-primary" type="submit">Проверить</button>
+        </form>
+
+        <div id="keypad" class="keypad" aria-label="Экранная клавиатура"></div>
+
+        <button id="newGameBtn" class="btn btn-secondary" type="button">Новая игра</button>
+
+        <div class="legend">
+            <span><i class="dot bull"></i> бык — цифра на своём месте</span>
+            <span><i class="dot cow"></i> корова — цифра есть, но не тут</span>
+            <span><i class="dot miss"></i> такой цифры нет</span>
+        </div>
+
+        <section class="history-block">
+            <h2 class="history-title">История попыток</h2>
+            <ol id="history" class="history"></ol>
+        </section>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
