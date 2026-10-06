@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simon</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="app">
+        <h1 class="title">Саймон говорит</h1>
+
+        <div class="stats">
+            <div class="stat">Уровень <strong id="roundValue">0</strong></div>
+            <div class="stat">Рекорд <strong id="bestValue">0</strong></div>
+        </div>
+
+        <div class="modes" role="group" aria-label="Режим игры">
+            <button id="modeClassic" class="mode-btn is-selected" type="button" data-mode="classic">Классика</button>
+            <button id="modeReverse" class="mode-btn" type="button" data-mode="reverse">Наоборот</button>
+        </div>
+
+        <p id="statusText" class="status" aria-live="polite">Нажмите «Старт»</p>
+
+        <div id="padBoard" class="pad-board">
+            <button class="pad pad-0" type="button" data-pad="0" aria-label="Красная" disabled></button>
+            <button class="pad pad-1" type="button" data-pad="1" aria-label="Зелёная" disabled></button>
+            <button class="pad pad-2" type="button" data-pad="2" aria-label="Синяя" disabled></button>
+            <button class="pad pad-3" type="button" data-pad="3" aria-label="Жёлтая" disabled></button>
+            <div class="hub" id="hubValue">0</div>
+        </div>
+
+        <div class="controls">
+            <button id="startButton" class="control-btn" type="button">Старт</button>
+            <button id="soundButton" class="control-btn" type="button" aria-pressed="true">Звук: вкл</button>
+        </div>
+
+        <p class="hint">С каждым уровнем показ ускоряется.</p>
+    </main>
+
+    <script src="model.js"></script>
+    <script src="view.js"></script>
+    <script>
+
+        function selectMode(mode) {
+            state.mode = mode;
+            showSelectedMode(mode);
+            renderScores();
+        }
+
+        async function playPattern(sessionId) {
+            state.isShowingPattern = true;
+            setPadsEnabled(false);
+            showStatus('Запоминайте…');
+
+            await wait(BEFORE_SHOW_MS);
+            for (const padIndex of state.pattern) {
+                if (sessionId !== state.sessionId) return;
+                lightPad(padIndex);
+                await wait(getLightDuration());
+                dimPad(padIndex);
+                await wait(getGapDuration());
+            }
+            if (sessionId !== state.sessionId) return;
+
+            state.isShowingPattern = false;
+            state.inputPosition = 0;
+            setPadsEnabled(true);
+            showStatus(state.mode === 'reverse' ? 'Повторяйте с конца!' : 'Ваш ход');
+        }
+
+        function startNextRound() {
+            addRandomStep();
+            renderScores();
+            bumpHub();
+            playPattern(state.sessionId);
+        }
+
+        function startGame() {
+            resetGame();
+            dimAllPads();
+            setStartButtonText('Заново');
+            setModeButtonsEnabled(false);
+
+            startNextRound();
+        }
+
+        function endGame() {
+            const reachedRound = finishGame();
+            setPadsEnabled(false);
+            setModeButtonsEnabled(true);
+
+            renderScores();
+            showStatus(`Ошибка! Вы дошли до уровня ${reachedRound}`, true);
+            setStartButtonText('Старт');
+
+            playErrorTone();
+        }
+
+        function handlePadPress(padIndex) {
+            if (!state.isRunning || state.isShowingPattern) return;
+
+            const sessionId = state.sessionId;
+            lightPad(padIndex);
+            wait(PLAYER_FLASH_MS).then(() => {
+                if (sessionId === state.sessionId) dimPad(padIndex);
+            });
+
+            if (padIndex !== getExpectedPad()) {
+                endGame();
+                return;
+            }
+
+            state.inputPosition++;
+            if (state.inputPosition === state.pattern.length) {
+                setPadsEnabled(false);
+                state.isShowingPattern = true;
+                showStatus('Верно!');
+                wait(AFTER_ROUND_MS).then(() => {
+                    if (sessionId === state.sessionId) startNextRound();
+                });
+            }
+        }
+
+        padElements.forEach(pad => {
+            pad.addEventListener('click', () => handlePadPress(Number(pad.dataset.pad)));
+        });
+
+        modeButtonElements.forEach(button => {
+            button.addEventListener('click', () => {
+                if (!state.isRunning) selectMode(button.dataset.mode);
+            });
+        });
+
+        startButtonElement.addEventListener('click', startGame);
+
+        soundButtonElement.addEventListener('click', () => {
+            state.isSoundOn = !state.isSoundOn;
+            showSoundState();
+        });
+
+        loadBestScores();
+        renderScores();
+    </script>
+</body>
+</html>
