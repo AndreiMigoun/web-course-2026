@@ -16,12 +16,12 @@ class GameView {
         const size = this.canvas.width / model.cols;
 
         this.#paintField(model, size);
-        
+
         for (const food of model.foods) {
             this.#paintFood(food, size);
         }
 
-        this.#paintBonus(model.bonus, size);
+        this.#paintBonus(model.bonus, size, model.BONUS_LIFETIME);
         this.#paintSnake(model, size);
         if (model.phase === 'paused') this.#paintPause();
 
@@ -55,7 +55,7 @@ class GameView {
     #paintEyes(model, size) {
         const ctx = this.ctx;
         const head = model.body[0];
-        const { dx, dy } = HEADINGS[model.heading];
+        const { dx, dy } = model.HEADINGS[model.heading];
         const cx = head.x * size + size / 2;
         const cy = head.y * size + size / 2;
 
@@ -83,7 +83,7 @@ class GameView {
         ctx.fillRect(cx, cy - size / 2 + 1, 3, 4);
     }
 
-    #paintBonus(bonus, size) {
+    #paintBonus(bonus, size, bonusLifetime) {
         if (!bonus) return;
         const { ctx } = this;
         const cx = bonus.x * size + size / 2;
@@ -97,7 +97,7 @@ class GameView {
         ctx.fillStyle = '#7bd66b';
         ctx.fillRect(cx, cy - size / 2 + 1, 3, 4);
 
-        const share = bonus.ttl / BONUS_LIFETIME;
+        const share = bonus.ttl / bonusLifetime;
         ctx.strokeStyle = '#fff3b0';
         ctx.lineWidth = 2;
         ctx.beginPath();

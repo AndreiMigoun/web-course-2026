@@ -1,16 +1,16 @@
-const KEY_TO_HEADING = {
-    ArrowUp: 'up', KeyW: 'up',
-    ArrowDown: 'down', KeyS: 'down',
-    ArrowLeft: 'left', KeyA: 'left',
-    ArrowRight: 'right', KeyD: 'right'
-};
-
 class GameController {
+    static KEY_TO_HEADING = {
+        ArrowUp: 'up',    KeyW: 'up',
+        ArrowDown: 'down',  KeyS: 'down',
+        ArrowLeft: 'left',  KeyA: 'left',
+        ArrowRight: 'right', KeyD: 'right'
+    };
+
     constructor(model, view) {
         this.model = model;
         this.view = view;
         this.lastStamp = null;
-        this.lag = 0; 
+        this.lag = 0;
         this.rafId = null;
 
         document.addEventListener('keydown', e => this.#onKey(e));
@@ -35,7 +35,7 @@ class GameController {
         this.lastStamp = stamp;
 
         if (this.model.phase === 'playing') {
-            this.lag += Math.min(dt, 500); 
+            this.lag += Math.min(dt, 500);
 
             while (this.lag >= this.model.stepDelay && this.model.phase === 'playing') {
                 this.model.update();
@@ -55,7 +55,7 @@ class GameController {
             this.model.togglePause();
             return;
         }
-        const heading = KEY_TO_HEADING[event.code];
+        const heading = GameController.KEY_TO_HEADING[event.code];
         if (!heading) return;
         event.preventDefault();
         if (this.model.phase === 'playing') this.model.steer(heading);
