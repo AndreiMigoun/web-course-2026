@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Змейка</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="app">
+        <h1 class="title">Змейка</h1>
+
+        <section class="stats">
+            <div class="stat"><span class="stat-label">Счёт</span><span id="scoreOut" class="stat-value">0</span></div>
+            <div class="stat"><span class="stat-label">Уровень</span><span id="levelOut" class="stat-value">1</span></div>
+            <div class="stat"><span class="stat-label">Рекорд</span><span id="bestOut" class="stat-value">0</span></div>
+        </section>
+
+        <div class="board">
+            <canvas id="field" width="400" height="400"></canvas>
+
+            <div id="endScreen" class="overlay" hidden>
+                <div id="endTitle" class="overlay-title">Игра окончена</div>
+                <div id="endScore" class="overlay-score"></div>
+                <button id="againBtn" class="btn" type="button">Начать заново</button>
+            </div>
+        </div>
+
+        <p class="hint">
+            Стрелки или WASD — движение, пробел — пауза.<br>
+            🍎 +1 очко &nbsp;·&nbsp; ⭐ золотое яблоко: +3 очка, но исчезает через несколько секунд.
+        </p>
+    </main>
+
+    <script src="model.js"></script>
+    <script src="view.js"></script>
+    <script src="control.js"></script>
+</body>
+</html>
