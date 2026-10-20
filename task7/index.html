@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <title>Лента постов</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="shell">
+        <header class="topbar">
+            <h1 class="title">Лента</h1>
+
+            <nav id="tabs" class="tabs" role="tablist">
+                <button id="tabAll" class="tab" type="button" role="tab" data-tab="all">Все</button>
+                <button id="tabLiked" class="tab" type="button" role="tab" data-tab="liked"> Понравившиеся <span id="likedCount" class="badge">0</span> </button>
+            </nav>
+
+            <div class="searchbar">
+                <input id="searchField" class="search" type="search" placeholder="Поиск по заголовку" autocomplete="off">
+            </div>
+        </header>
+
+        <main class="app">
+            <p id="counter" class="counter"></p>
+
+            <section id="feed" class="feed"></section>
+
+            <div id="loader" class="status" hidden>
+                <span class="spinner"></span>
+                <span>Загрузка...</span>
+            </div>
+
+            <div id="errorBox" class="status error" role="alert" hidden>
+                <span id="errorText"></span>
+                <button id="retryBtn" class="btn" type="button">Повторить</button>
+            </div>
+
+            <p id="emptyNote" class="status" hidden></p>
+            <p id="endNote" class="status" hidden>Больше постов нет</p>
+        </main>
+    </div>
+
+    <script src="model.js"></script>
+    <script src="view.js"></script>
+    <script src="control.js"></script>
+</body>
+</html>
