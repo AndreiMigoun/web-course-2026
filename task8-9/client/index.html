@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zen-Money</title>
+    <link rel="stylesheet" href="style.css">
+    <script type="module" src="main.js"></script>
+</head>
+<body>
+
+    <div id="message" class="message" role="alert" popover="manual"></div>
+
+    <div class="app">
+
+        <aside class="sidebar">
+            <div class="brand">
+                <span class="brand__logo">Z</span>
+                <span class="brand__name">Zen-Money</span>
+            </div>
+
+            <div class="sidebar__actions">
+                <button id="open-transaction-btn" class="btn btn--primary btn--block" type="button">+ Новая операция</button>
+                <button id="open-category-btn" class="btn btn--block" type="button">Новая категория</button>
+            </div>
+
+            <form id="filters-form" class="filters">
+                <h2 class="sidebar__title">Фильтры</h2>
+
+                <label class="field">
+                    <span>Категория</span>
+                    <select id="filter-category" name="category_id"></select>
+                </label>
+
+                <label class="field">
+                    <span>Тип</span>
+                    <select id="filter-type" name="type">
+                        <option value="">Все</option>
+                        <option value="income">Доходы</option>
+                        <option value="expense">Расходы</option>
+                    </select>
+                </label>
+
+                <div class="filters__dates">
+                    <label class="field">
+                        <span>С даты</span>
+                        <input id="filter-from" name="from" type="date">
+                    </label>
+                    <label class="field">
+                        <span>По дату</span>
+                        <input id="filter-to" name="to" type="date">
+                    </label>
+                </div>
+
+                <button id="filters-reset" class="btn btn--block" type="button">Сбросить фильтры</button>
+            </form>
+        </aside>
+
+        <main class="main">
+            <header class="main__header">
+                <h1>Обзор финансов</h1>
+                <p>Ваши доходы и расходы в одном месте</p>
+            </header>
+
+            <section class="stats" aria-label="Сводка">
+                <article class="stat stat--balance">
+                    <span class="stat__label">Баланс</span>
+                    <strong id="sum-balance" class="stat__value">0,00 Br</strong>
+                </article>
+                <article class="stat">
+                    <span class="stat__icon stat__icon--income">↑</span>
+                    <span class="stat__label">Доходы</span>
+                    <strong id="sum-income" class="stat__value income">0,00 Br</strong>
+                </article>
+                <article class="stat">
+                    <span class="stat__icon stat__icon--expense">↓</span>
+                    <span class="stat__label">Расходы</span>
+                    <strong id="sum-expense" class="stat__value expense">0,00 Br</strong>
+                </article>
+            </section>
+
+            <section class="history">
+                <h2 class="section-title">Операции</h2>
+                <ul id="transactions" class="transactions"></ul>
+            </section>
+        </main>
+    </div>
+
+    <dialog id="transaction-dialog" class="sheet">
+        <form id="transaction-form" class="sheet__form" novalidate>
+            <header class="sheet__header">
+                <h2 id="form-title" class="sheet__title">Новая операция</h2>
+                <button class="icon-btn" type="button" data-close aria-label="Закрыть">×</button>
+            </header>
+
+            <label class="field">
+                <span>Сумма</span>
+                <input id="amount" class="input--big" type="text" inputmode="decimal" placeholder="0.00" autocomplete="off">
+                <small class="field__error" data-error-for="amount"></small>
+            </label>
+
+            <div class="field-row">
+                <label class="field">
+                    <span>Тип</span>
+                    <select id="type">
+                        <option value="expense">Расход</option>
+                        <option value="income">Доход</option>
+                    </select>
+                </label>
+
+                <label class="field">
+                    <span>Категория</span>
+                    <select id="category"></select>
+                    <small class="field__error" data-error-for="category"></small>
+                </label>
+            </div>
+
+            <label class="field">
+                <span>Дата</span>
+                <input id="date" type="date">
+                <small class="field__error" data-error-for="date"></small>
+            </label>
+
+            <label class="field">
+                <span>Комментарий</span>
+                <input id="comment" type="text" maxlength="200" placeholder="Необязательно" autocomplete="off">
+            </label>
+
+            <div class="sheet__footer">
+                <button id="cancel-btn" class="btn" type="button" data-close>Отмена</button>
+                <button id="submit-btn" class="btn btn--primary" type="submit">Добавить</button>
+            </div>
+        </form>
+    </dialog>
+
+    <dialog id="category-dialog" class="sheet">
+        <form id="category-form" class="sheet__form" novalidate>
+            <header class="sheet__header">
+                <h2 class="sheet__title">Новая категория</h2>
+                <button class="icon-btn" type="button" data-close aria-label="Закрыть">×</button>
+            </header>
+
+            <label class="field">
+                <span>Название</span>
+                <input id="new-category-name" type="text" maxlength="50" autocomplete="off">
+                <small class="field__error" data-error-for="new-category-name"></small>
+            </label>
+
+            <label class="field">
+                <span>Тип</span>
+                <select id="new-category-type">
+                    <option value="expense">Расход</option>
+                    <option value="income">Доход</option>
+                </select>
+            </label>
+
+            <div class="sheet__footer">
+                <button class="btn" type="button" data-close>Отмена</button>
+                <button class="btn btn--primary" type="submit">Создать</button>
+            </div>
+        </form>
+    </dialog>
+</body>
+</html>
