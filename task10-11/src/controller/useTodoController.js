@@ -1,28 +1,20 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDependencies } from '../di/DependencyContext.jsx';
-import { FILTERS } from '../model/todoModel.js';
 
-/**
- * CONTROLLER — связывает View и Model.
- * Хранит состояние (useState), обрабатывает действия пользователя,
- * делегирует бизнес-логику модели и сохранение — хранилищу.
- * Модель и хранилище получает через DI, а не создаёт сам.
- */
 export function useTodoController() {
   const { todoModel, todoStorage } = useDependencies();
 
   const [todos, setTodos] = useState(() => todoStorage.load());
-  const [filter, setFilter] = useState(FILTERS.ALL);
+  const [filterId, setFilterId] = useState(todoModel.filters[0].id);
+  const [sortId, setSortId] = useState(todoModel.sorts[0].id);
 
-  // Синхронизация с хранилищем при каждом изменении списка
   useEffect(() => {
     todoStorage.save(todos);
   }, [todos, todoStorage]);
 
-  /** @returns {{ ok: boolean, error?: string }} */
-  const addTodo = useCallback((text) => {
+  const addTodo = useCallback((text, completed) => {
     const result = todoModel.validate(text);
-    if (result.ok) setTodos((prev) => todoModel.add(prev, text));
+    if (result.ok) setTodos((prev) => todoModel.add(prev, text, completed));
     return result;
   }, [todoModel]);
 
@@ -36,8 +28,17 @@ export function useTodoController() {
     [todoModel]
   );
 
-  const visibleTodos = useMemo(() => todoModel.filter(todos, filter), [todoModel, todos, filter]);
+  const visibleTodos = useMemo(
+    () => todoModel.sort(todoModel.filter(todos, filterId), sortId),
+    [todoModel, todos, filterId, sortId]
+  );
+
   const stats = useMemo(() => todoModel.stats(todos), [todoModel, todos]);
 
-  return { visibleTodos, stats, filter, setFilter, addTodo, toggleTodo, deleteTodo };
+  return {
+    visibleTodos, stats,
+    filters: todoModel.filters, filterId, setFilterId,
+    sorts: todoModel.sorts, sortId, setSortId,
+    addTodo, toggleTodo, deleteTodo,
+  };
 }

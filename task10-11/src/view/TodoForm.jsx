@@ -1,18 +1,13 @@
-import { useState } from 'react';
+import { memo, useState } from 'react';
 
-/**
- * VIEW. Поле ввода + кнопка.
- * Локальное состояние — только текст поля и сообщение (состояние интерфейса).
- * Валидацию выполняет модель через onAdd.
- * @param {{ onAdd: (text: string) => { ok: boolean, error?: string } }} props
- */
-export default function TodoForm({ onAdd }) {
+function TodoForm({ onAdd }) {
   const [text, setText] = useState('');
+  const [status, setStatus] = useState('active');
   const [error, setError] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const result = onAdd(text);
+    const result = onAdd(text, status === 'completed');
     if (result.ok) {
       setText('');
       setError('');
@@ -23,12 +18,12 @@ export default function TodoForm({ onAdd }) {
 
   const handleChange = (e) => {
     setText(e.target.value);
-    if (error) setError('');
+    setError('');
   };
 
   return (
     <>
-      <form className="todo-form" onSubmit={handleSubmit} noValidate>
+      <form className="todo-form" onSubmit={handleSubmit}>
         <input
           type="text"
           className="todo-input"
@@ -37,9 +32,20 @@ export default function TodoForm({ onAdd }) {
           value={text}
           onChange={handleChange}
         />
+        <select
+          className="status-select"
+          aria-label="Тип задачи"
+          value={status}
+          onChange={(e) => setStatus(e.target.value)}
+        >
+          <option value="active">Невыполненная</option>
+          <option value="completed">Выполненная</option>
+        </select>
         <button type="submit" className="btn btn-add">Добавить</button>
       </form>
       {error && <p className="warning">{error}</p>}
     </>
   );
 }
+
+export default memo(TodoForm);

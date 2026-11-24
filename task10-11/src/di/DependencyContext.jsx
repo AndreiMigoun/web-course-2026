@@ -4,14 +4,10 @@ const DependencyContext = createContext(null);
 
 export function DependencyProvider({ dependencies, children }) {
   return (
-    <DependencyContext.Provider value={dependencies}>
+    <DependencyContext value={dependencies}>
       {children}
-    </DependencyContext.Provider>
+    </DependencyContext>
   );
 }
 
-export function useDependencies() {
-  const deps = useContext(DependencyContext);
-  if (!deps) throw new Error('useDependencies нужно вызывать внутри <DependencyProvider>');
-  return deps;
-}
+export const useDependencies = () => useContext(DependencyContext);

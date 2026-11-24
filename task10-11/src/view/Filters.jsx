@@ -1,24 +1,14 @@
-import { FILTERS } from '../model/todoModel.js';
+import { memo } from 'react';
 
-const OPTIONS = [
-  { value: FILTERS.ALL, label: 'Все' },
-  { value: FILTERS.ACTIVE, label: 'Активные' },
-  { value: FILTERS.COMPLETED, label: 'Завершённые' },
-];
-
-/**
- * VIEW. Кнопки фильтра.
- * @param {{ current: string, onChange: (filter: string) => void }} props
- */
-export default function Filters({ current, onChange }) {
+function Filters({ options, current, onChange }) {
   return (
     <div className="filters">
-      {OPTIONS.map(({ value, label }) => (
+      {options.map(({ id, label }) => (
         <button
-          key={value}
+          key={id}
           type="button"
-          className={`filter-btn${current === value ? ' is-active' : ''}`}
-          onClick={() => onChange(value)}
+          className={`filter-btn${current === id ? ' is-active' : ''}`}
+          onClick={() => onChange(id)}
         >
           {label}
         </button>
@@ -26,3 +16,5 @@ export default function Filters({ current, onChange }) {
     </div>
   );
 }
+
+export default memo(Filters);

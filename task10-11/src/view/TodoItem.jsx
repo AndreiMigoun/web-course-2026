@@ -1,12 +1,6 @@
-/**
- * VIEW. Одна задача. Своего состояния нет — только props и колбэки.
- * @param {{
- *   todo: { id: string|number, text: string, completed: boolean },
- *   onToggle: (id: string|number) => void,
- *   onDelete: (id: string|number) => void
- * }} props
- */
-export default function TodoItem({ todo, onToggle, onDelete }) {
+import { memo } from 'react';
+
+function TodoItem({ todo, onToggle, onDelete }) {
   return (
     <li className={`todo-item${todo.completed ? ' completed' : ''}`}>
       <input
@@ -22,3 +16,5 @@ export default function TodoItem({ todo, onToggle, onDelete }) {
     </li>
   );
 }
+
+export default memo(TodoItem);

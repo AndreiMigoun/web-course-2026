@@ -1,29 +1,24 @@
-/**
- * MODEL — предметная логика задач. Ничего не знает о React и DOM.
- * Все методы чистые: принимают массив и возвращают новый.
- * Генератор id приходит снаружи (DI).
- */
-
-export const FILTERS = Object.freeze({
-  ALL: 'all',
-  ACTIVE: 'active',
-  COMPLETED: 'completed',
-});
-
 export class TodoModel {
-  /** @param {{ generateId: () => (string|number) }} deps */
-  constructor({ generateId }) {
+  constructor({ generateId, now, filters, sorts }) {
     this.generateId = generateId;
+    this.now = now;
+    this.filters = filters;
+    this.sorts = sorts;
   }
 
-  /** @returns {{ ok: boolean, error?: string }} */
   validate(text) {
-    if (text.trim() === '') return { ok: false, error: 'Введите текст задачи!' };
-    return { ok: true };
+    return text.trim() === ''
+      ? { ok: false, error: 'Введите текст задачи!' }
+      : { ok: true };
   }
 
-  add(todos, text) {
-    const todo = { id: this.generateId(), text: text.trim(), completed: false };
+  add(todos, text, completed = false) {
+    const todo = {
+      id: this.generateId(),
+      text: text.trim(),
+      completed,
+      createdAt: this.now(),
+    };
     return [...todos, todo];
   }
 
@@ -35,10 +30,14 @@ export class TodoModel {
     return todos.filter((t) => t.id !== id);
   }
 
-  filter(todos, filter) {
-    if (filter === FILTERS.ACTIVE) return todos.filter((t) => !t.completed);
-    if (filter === FILTERS.COMPLETED) return todos.filter((t) => t.completed);
-    return todos;
+  filter(todos, filterId) {
+    const { predicate } = this.filters.find((f) => f.id === filterId);
+    return todos.filter(predicate);
+  }
+
+  sort(todos, sortId) {
+    const { compare } = this.sorts.find((s) => s.id === sortId);
+    return [...todos].sort(compare);
   }
 
   stats(todos) {
